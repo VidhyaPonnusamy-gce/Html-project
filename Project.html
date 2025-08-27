@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Management</title>
+  <link rel="stylesheet" href="Project.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Contact Management Form</h2>
+    <form id="contactForm">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" required>
+      <p id="firstNameError" class="error"></p>
+
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" name="lastName" required>
+      <p id="lastNameError" class="error"></p>
+
+      <label for="address">Address</label>
+      <textarea id="address" name="address" required></textarea>
+
+      <label for="email">Email ID</label>
+      <input type="emai" id="email" name="email">
+      <p id="emailError" class="error"></p>
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required placeholder="Enter 10-digit number">
+      <p id="phoneError" class="error"></p>
+
+      <center><button type="submit">Submit</button></center>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      const firstNameError = document.getElementById('firstNameError');
+      const lastNameError = document.getElementById('lastNameError');
+      const emailError = document.getElementById('emailError');
+      const phoneError = document.getElementById('phoneError');
+
+      firstNameError.textContent = "";
+      lastNameError.textContent = "";
+      emailError.textContent = "";
+      phoneError.textContent = "";
+
+      const nameRegex = /^[A-Za-z]+$/;
+      const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+      const phoneRegex = /^\d{10}$/;
+
+      let isValid = true;
+
+      if (!nameRegex.test(firstName)) {
+        firstNameError.textContent = "Invalid first name. Only alphabets are allowed.";
+        isValid = false;
+      }
+
+      if (!nameRegex.test(lastName)) {
+        lastNameError.textContent = "Invalid last name. Only alphabets are allowed.";
+        isValid = false;
+      }
+
+      if (!emailRegex.test(email)) {
+        emailError.textContent = "Invalid email format.";
+        isValid = false;
+      }
+
+      if (!phoneRegex.test(phone)) {
+        phoneError.textContent = "Invalid phone number format.";
+        isValid = false;
+      }
+      if (!isValid) {
+        alert("Details contain invalid format of input, so it is rejected. Kindly refresh to fill another records");
+        return;
+      }
+      const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+      const duplicates = [];
+
+      for (let contact of contacts) {
+        if (contact.firstName === firstName) duplicates.push("First Name");
+        if (contact.lastName === lastName) duplicates.push("Last Name");
+        if (contact.email === email) duplicates.push("Email");
+        if (contact.phone === phone) duplicates.push("Phone Number");
+        if (contact.address === address) duplicates.push("Address");
+      }
+
+      if (duplicates.length > 0) {
+        alert("Duplicate Entry: " + [...new Set(duplicates)].join(", ") + " already exists!");
+        return;
+      }
+      const newcontact = { firstName, lastName, address, email, phone };
+      contacts.push(newcontact);
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+      window.location.href = 'table.html';
+    });
+  </script>
+
+  <style>
+    .error {
+      color: white;
+      font-size: 18px;
+      margin: 3px 0 10px;
+    }
+  </style>
+</body>
+</html>
